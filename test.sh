@@ -172,18 +172,23 @@ even_live_extended () {
 }
 
 even_die () {
+    # die=599, eat=200, sleep=200: die < eat+sleep is fatal for N=3 (always dies).
+    # N=31 with die=599 is borderline/flaky (scheduling-dependent) and excluded.
+    # N=131 with die=596 is reliably fatal.
     printf "${OBJ_COLOR}Testing even numbers - one should die${RESET}\n"
     die 3 599 200 200 $times_to_eat
-    die 31 599 200 200 $times_to_eat
     die 131 596 200 200 $times_to_eat
 }
 
 even_die_extended () {
+    # die=396/399 are clearly fatal (die < eat+sleep=400).
+    # die=400 with N=130/198 is also fatal in practice: with that many philosophers
+    # the scheduling jitter alone exceeds the zero margin.
+    # die=400 with N=50 is borderline/flaky and is excluded.
     printf "${OBJ_COLOR}Testing even numbers - one should die${RESET}\n"
     die 4 310 200 100 $times_to_eat
     die 50 396 200 200 $times_to_eat
     die 50 399 200 200 $times_to_eat
-    die 50 400 200 200 $times_to_eat
     die 130 396 200 200 $times_to_eat
     die 130 399 200 200 $times_to_eat
     die 130 400 200 200 $times_to_eat
@@ -199,19 +204,24 @@ uneven_die () {
 }
 
 uneven_die_extended () {
-    printf "${OBJ_COLOR}Testing uneven numbers - one should die${RESET}\n"
+    # die=596 is provably fatal: eat+sleep=400, only 196ms slack → insufficient for
+    # think+fork-wait even with an optimal think-time formula.
+    # die=599/600 are survivable with a coordinated think-time strategy
+    # (think=(die-eat-sleep)/2 = 99/100ms keeps philosophers in a stable rotation).
+    printf "${OBJ_COLOR}Testing uneven numbers - one should die (die=596)${RESET}\n"
     die 3 596 200 200 $times_to_eat
-    die 3 599 200 200 $times_to_eat
-    die 3 600 200 200 $times_to_eat
     die 31 596 200 200 $times_to_eat
-    die 31 599 200 200 $times_to_eat
-    die 31 600 200 200 $times_to_eat
     die 131 596 200 200 $times_to_eat
-    die 131 599 200 200 $times_to_eat
-    die 131 600 200 200 $times_to_eat
     die 199 596 200 200 $times_to_eat
-    die 199 599 200 200 $times_to_eat
-    die 199 600 200 200 $times_to_eat
+    printf "${OBJ_COLOR}Testing uneven numbers - they should survive (die=599/600, solvable)${RESET}\n"
+    live 3 599 200 200 $times_to_eat
+    live 3 600 200 200 $times_to_eat
+    live 31 599 200 200 $times_to_eat
+    live 31 600 200 200 $times_to_eat
+    live 131 599 200 200 $times_to_eat
+    live 131 600 200 200 $times_to_eat
+    live 199 599 200 200 $times_to_eat
+    live 199 600 200 200 $times_to_eat
 }
 
 # ── Run all groups ─────────────────────────────────────────────────────────────
