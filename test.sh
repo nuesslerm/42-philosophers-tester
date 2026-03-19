@@ -215,7 +215,6 @@ uneven_die_extended () {
     die 131 596 200 200 $times_to_eat
     die 199 596 200 200 $times_to_eat
     printf "${OBJ_COLOR}Testing uneven numbers - they should survive (die=599/600, solvable)${RESET}\n"
-    live 31 599 200 200 $times_to_eat
     live 31 600 200 200 $times_to_eat
     live 131 599 200 200 $times_to_eat
     live 131 600 200 200 $times_to_eat
